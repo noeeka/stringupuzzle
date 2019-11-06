@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>成语接龙</title>
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="row-fluid" id="vue_det">
+    欢迎您：{{info.username}}
+    <div class="span12">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="showidom">成语</label>
+                <div class="controls">
+
+                    <input id="showidom" type="text" v-model:value="info.idom"/>
+                    <input id="original" type="hidden" v-model:value="info.id"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="showexplain">释义</label>
+                <div class="controls">
+                    <input id="showexplain" type="text" v-model:value="info.explain"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputguess">猜一下</label>
+                <div class="controls">
+                    <input id="inputguess" type="text"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="button" class="btn" v-on:click="guess()">下一个</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    new Vue({
+        el: '#vue_det',
+        data: {
+            info: "hrllo",
+            idom: "test"
+        },
+        mounted() {
+            axios.get('http://192.168.213.134:5000/guess', {
+                withCredentials: true
+            })
+                .then((response) => {
+                        if (response.data.state == 0) {
+                            this.info = response.data.ret
+                        }else{
+                            alert(response.data.ret)
+                        }
+
+                    }
+                )
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        methods: {
+            guess: function (event) {
+                axios.post('http://192.168.213.134:5000/guess', {
+                    'guess': $("#inputguess").val(),
+                    'original': $("#original").val()
+                },{withCredentials: true})
+                    .then((response) => {
+                            if (response.data.state == 0) {
+                                this.info = response.data.ret
+                            }else{
+                                alert(response.data.ret)
+                            }
+
+                        }
+                    )
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            }
+        }
+    })
+</script>
+</body>
+</html>

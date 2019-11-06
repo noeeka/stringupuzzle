@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>成语接龙</title>
+        <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+    </head>
+<body>
+<div class="container-fluid" id="vue_app">
+    <div class="row-fluid">
+        <div class="span12">
+            <form οnsubmit="return false;">
+                <fieldset>
+                    <legend>欢迎来到成语接龙</legend>
+                    <label>请输入您的昵称开始游戏</label><input type="text" id="username" @keyup.enter="login()"/><br/>
+                    <button class="btn" type="button" @click="login">开始游戏</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: '#vue_app',
+        data: {},
+        mounted() {
+        },
+        created() {
+            var lett = this;
+            document.onkeydown = function (e) {
+                var key = window.event.keyCode;
+                if (key == 13) {
+                    lett.login();
+                }
+            }
+        },
+        methods: {
+            login: function () {
+                axios.post('http://192.168.213.134:5000/login', {
+                    'username': $("#username").val(),
+                    'original': $("#original").val()
+                }, {
+                    withCredentials: true
+                })
+                    .then((response) => {
+                            if (response.data.state == 0) {
+                                window.location.href = "./guess.html";
+                            }
+                        }
+                    )
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            }
+        }
+    })
+</script>
+</body>
+</html>
